@@ -74,7 +74,7 @@ public class Inventario {
         System.out.print("Nuevo precio unitario: "); s = scanner.nextLine(); if (!s.isBlank()) p.setPrecio(parseDoubleSafe(s));
         System.out.println("Producto actualizado.");
     }
-
+    
     public void menuQuitar(Scanner scanner) {
         System.out.print("Código a quitar: ");
         String codigo = scanner.nextLine();
@@ -91,5 +91,40 @@ public class Inventario {
     }
     private double parseDoubleSafe(String s) {
         try { return Double.parseDouble(s.trim()); } catch (Exception e) { return 0.0; }
+
+    
+    }
+
+    public void mostrarAlertas() {
+    System.out.println("\n=== ALERTAS DEL INVENTARIO ===");
+
+    boolean hayAlertas = false;
+
+    for (Producto p : productos.values()) {
+
+        // SIN STOCK
+        if (p.cantidad == 0) {
+            System.out.println("❌ " + p.nombre + " — SIN STOCK");
+            hayAlertas = true;
+        }
+
+        // STOCK BAJO
+        else if (p.cantidad <= p.stock_minimo) {
+            System.out.println("⚠️ " + p.nombre + " — Stock bajo (" + p.cantidad + ")");
+            hayAlertas = true;
+        }
+
+        // PRODUCTO VENCIDO (solo si lo manejas)
+        if (p.fechaVencimiento != null && p.estaVencido()) {
+            System.out.println("⛔ " + p.nombre + " — PRODUCTO VENCIDO");
+            hayAlertas = true;
+        }
+    }
+
+    if (!hayAlertas) {
+        System.out.println("✔ No hay alertas. Todo está en orden.");
     }
 }
+
+}
+
