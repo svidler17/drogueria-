@@ -104,25 +104,25 @@ public class Inventario {
 
         // SIN STOCK
         if (p.cantidad == 0) {
-            System.out.println("❌ " + p.nombre + " — SIN STOCK");
+            System.out.println(" " + p.nombre + " — SIN STOCK");
             hayAlertas = true;
         }
 
         // STOCK BAJO
         else if (p.cantidad <= p.stock_minimo) {
-            System.out.println("⚠️ " + p.nombre + " — Stock bajo (" + p.cantidad + ")");
+            System.out.println(" " + p.nombre + " — Stock bajo (" + p.cantidad + ")");
             hayAlertas = true;
         }
 
-        // PRODUCTO VENCIDO (solo si lo manejas)
+        // PRODUCTO VENCIDO 
         if (p.fechaVencimiento != null && p.estaVencido()) {
-            System.out.println("⛔ " + p.nombre + " — PRODUCTO VENCIDO");
+            System.out.println(" " + p.nombre + " — PRODUCTO VENCIDO");
             hayAlertas = true;
         }
     }
 
     if (!hayAlertas) {
-        System.out.println("✔ No hay alertas. Todo está en orden.");
+        System.out.println(" No hay alertas. Todo está en orden.");
     }
 }
 
