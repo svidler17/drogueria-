@@ -47,6 +47,7 @@ public class Main {
             System.out.println("2. Ventas");
             System.out.println("3. Reportes");
             if (actual.isAdmin()) System.out.println("4. Usuarios (Admin)");
+            System.out.println("5. Ver alertas");
             System.out.println("0. Salir");
             System.out.print("Opción: ");
             opc = leerInt();
@@ -56,6 +57,7 @@ public class Main {
                 case 2 -> menuVentas();
                 case 3 -> menuReportes();
                 case 4 -> { if (actual.isAdmin()) sistemaUsuarios.menuAdmin(scanner); else System.out.println("Acceso denegado."); }
+                case 5 -> inventario.mostrarAlertas();
                 case 0 -> System.out.println("Saliendo...");
                 default -> System.out.println("Opción inválida.");
             }
