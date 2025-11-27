@@ -17,7 +17,7 @@ public class Inventario {
     public void cargarPredeterminado() {
         productos.add(new Producto("P001","Paracetamol 500mg",50,10, LocalDate.now().plusMonths(8), false, 1200.0));
         productos.add(new Producto("P002","Ibuprofeno 400mg",30,8, LocalDate.now().plusMonths(6), false, 1500.0));
-        productos.add(new Producto("P003","Insulina (Frío)",20,5, LocalDate.now().plusMonths(4), true,45000.0));
+        productos.add(new Producto("P003","Insulina (Frío)",0,5, LocalDate.now().plusMonths(4), true,45000.0));
         productos.add(new Producto("P004","Antibiótico X 250mg",15,5, LocalDate.now().plusDays(10),false,8000.0));
         productos.add(new Producto("P005","Omeprazol 20mg",40,10,LocalDate.now().plusMonths(2),false,1800.0));
         // ===============================
