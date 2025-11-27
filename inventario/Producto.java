@@ -24,10 +24,6 @@ public class Producto {
         this.precio = precio;
     }
 
-    // ---------------------------------------------------
-    // GETTERS
-    // ---------------------------------------------------
-    public String getCodigo() { return codigo; }
     public String getNombre() { return nombre; }
     public int getCantidad() { return cantidad; }
     public int getStockMinimo() { return stockMinimo; }
@@ -35,9 +31,6 @@ public class Producto {
     public boolean isRequiereFrio() { return requiereFrio; }
     public double getPrecio() { return precio; }
 
-    // ---------------------------------------------------
-    // SETTERS
-    // ---------------------------------------------------
     public void setCodigo(String codigo) { this.codigo = codigo; }
     public void setNombre(String nombre) { this.nombre = nombre; }
     public void setCantidad(int cantidad) { this.cantidad = cantidad; }
@@ -46,9 +39,6 @@ public class Producto {
     public void setRequiereFrio(boolean requiereFrio) { this.requiereFrio = requiereFrio; }
     public void setPrecio(double precio) { this.precio = precio; }
 
-    // ---------------------------------------------------
-    // MÉTODOS DE ALERTA
-    // ---------------------------------------------------
     public boolean bajoStock() {
         return cantidad <= stockMinimo;
     }
