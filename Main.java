@@ -22,7 +22,7 @@ public class Main {
 
         inventario.cargarPredeterminado();
 
-        System.out.println("=== DROGUERÍA ===");
+        System.out.println("\u001B[34m\u001B[3m ----DROGUERIA---º\u001B[0m");
         System.out.print("Usuario: ");
         String user = scanner.nextLine();
         System.out.print("Contraseña: ");
@@ -38,11 +38,11 @@ public class Main {
 
         int opc;
         do {
-            System.out.println("\n--- MENÚ PRINCIPAL ---");
+            System.out.println("\nº--- MENÚ PRINCIPAL ---");
             System.out.println("1. Inventario");
             System.out.println("2. Ventas");
-            System.out.println("3. Reportes");
-            if (actual.isAdmin()) System.out.println("4. Usuarios (Admin)");
+            if (actual.isAdmin()) System.out.println("3. Reportes");
+            if (actual.isAdmin()) System.out.println("4. Usuarios ");
             System.out.println("5. Ver alertas");
             System.out.println("0. Salir");
             System.out.print("Opción: ");
@@ -51,8 +51,8 @@ public class Main {
             switch (opc) {
                 case 1 -> menuInventario();
                 case 2 -> menuVentas();
-                case 3 -> menuReportes();
-                case 4 -> { if (actual.isAdmin()) sistemaUsuarios.menuAdmin(scanner); else System.out.println("Acceso denegado."); }
+                case 3 -> { if (actual.isAdmin()) menuReportes(); else System.out.println("\u001B[31m\u001B[3mAcceso denegado :(\u001B[0m"); }
+                case 4 -> { if (actual.isAdmin()) sistemaUsuarios.menuAdmin(scanner); else System.out.println("\u001B[31m\u001B[3mAcceso denegado :(\u001B[0m"); }
                 case 5 -> inventario.mostrarAlertas();
                 case 0 -> System.out.println("Saliendo...");
                 default -> System.out.println("Opción inválida.");
@@ -136,4 +136,5 @@ public class Main {
             }
         } while (op != 0);
     }
-}
+
+    }
