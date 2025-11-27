@@ -22,7 +22,7 @@ public class Main {
 
         inventario.cargarPredeterminado();
 
-        System.out.println("=== DROGUERÍA MODULAR - MAIN ===");
+        System.out.println("=== DROGUERÍA ===");
         System.out.print("Usuario: ");
         String user = scanner.nextLine();
         System.out.print("Contraseña: ");
