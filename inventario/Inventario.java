@@ -132,7 +132,7 @@ public class Inventario {
 
         productos.add(new Producto(codigo, nombre, cant, min, fecha, frio, precio));
 
-        reordenarCodigos(); // 🔥 REORDENAR AUTOMÁTICO
+        reordenarCodigos(); // REORDENAR AUTOMÁTICO
 
         System.out.println("Producto agregado correctamente.");
     }
@@ -198,7 +198,7 @@ public class Inventario {
         }
 
         if (removed) {
-            reordenarCodigos(); // 🔥 REORDENAR AUTOMÁTICO AL ELIMINAR
+            reordenarCodigos(); // REORDENAR AUTOMÁTICO AL ELIMINAR
         }
 
         System.out.println(removed ? "Producto eliminado." : "Producto no encontrado.");
