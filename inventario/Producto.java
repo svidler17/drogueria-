@@ -1,4 +1,4 @@
-package inventario;
+package inventario;//acomodar el orden del menu
 
 import java.time.LocalDate;
 
