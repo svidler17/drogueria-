@@ -12,5 +12,4 @@ from project root:
 javac usuarios/*.java inventario/*.java ventas/*.java Main.java
 java Main
 
-Recomendación:
-- Cada carpeta puede ser colocada en ramas separadas en git (usuarios, inventario, ventas).
+
