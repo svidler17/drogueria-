@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-// Main launcher that ties the modules together.
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static SistemaUsuarios sistemaUsuarios = new SistemaUsuarios();
@@ -18,11 +17,9 @@ public class Main {
     private static DateTimeFormatter df = DateTimeFormatter.ISO_LOCAL_DATE;
 
     public static void main(String[] args) {
-        // Seed data
         sistemaUsuarios.crearUsuario("admin", "1234", true);
         sistemaUsuarios.crearUsuario("vendedor", "0000", false);
 
-        // Load sample inventory
         inventario.cargarPredeterminado();
 
         System.out.println("=== DROGUERÍA MODULAR - MAIN ===");
@@ -37,7 +34,6 @@ public class Main {
             return;
         }
 
-        // show alerts on login
         inventario.mostrarAlertas();
 
         int opc;
@@ -70,7 +66,6 @@ public class Main {
         } catch (Exception e) { return -1; }
     }
 
-    // Inventory menu delegates to Inventario module
     private static void menuInventario() {
         int op;
         do {
@@ -94,7 +89,6 @@ public class Main {
         } while (op != 0);
     }
 
-    // Sales menu interacts with Inventario and HistorialVentas
     private static void menuVentas() {
         System.out.println("\n--- VENTAS ---");
         System.out.print("Código producto: ");
@@ -108,7 +102,6 @@ public class Main {
         if (cantidad <= 0) { System.out.println("Cantidad inválida."); return; }
         if (p.getCantidad() < cantidad) { System.out.println("Stock insuficiente."); return; }
 
-        // perform sale
         p.setCantidad(p.getCantidad() - cantidad);
         double total = cantidad * p.getPrecio();
         Venta v = new Venta(java.time.LocalDate.now(), p.getCodigo(), p.getNombre(), cantidad, total);
