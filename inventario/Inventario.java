@@ -19,18 +19,18 @@ public class Inventario {
         productos.add(new Producto("P002","Ibuprofeno 400mg",30,8, LocalDate.now().plusMonths(6), false, 1500.0));
         productos.add(new Producto("P003","Insulina (Frío)",20,5, LocalDate.now().plusMonths(4), true,45000.0));
         productos.add(new Producto("P004","Antibiótico X 250mg",15,5, LocalDate.now().plusDays(10),false,8000.0));
-
+        productos.add(new Producto("P005","Omeprazol 20mg",40,10,LocalDate.now().plusMonths(2),false,1800.0));
         // ===============================
         //       NUEVOS PRODUCTOS
         // ===============================
 
-        productos.add(new Producto("P005","Vitamina C 1g",40,10, LocalDate.now().plusMonths(12), false, 2500.0));
-        productos.add(new Producto("P006","Omeprazol 20mg",60,15, LocalDate.now().plusMonths(10), false, 1800.0));
-        productos.add(new Producto("P007","Suero Oral",25,5, LocalDate.now().plusMonths(5), false, 3000.0));
+        productos.add(new Producto("P006","Vitamina C 1g",40,10, LocalDate.now().plusMonths(12), false, 2500.0));
+        productos.add(new Producto("P007","Omeprazol 20mg",60,15, LocalDate.now().plusMonths(10), false, 1800.0));
+        productos.add(new Producto("P008","Suero Oral",25,5, LocalDate.now().plusMonths(5), false, 3000.0));
 
-        productos.add(new Producto("P008","Gel antibacterial 250ml",3,5, LocalDate.now().plusDays(20), false, 5000.0));
-        productos.add(new Producto("P009","Jarabe para tos infantil",10,5, LocalDate.now().plusDays(3), false, 7000.0));
-        productos.add(new Producto("P010","Amoxicilina 500mg",0,5, LocalDate.now().plusMonths(2), false, 3500.0));
+        productos.add(new Producto("P009","Gel antibacterial 250ml",3,5, LocalDate.now().plusDays(20), false, 5000.0));
+        productos.add(new Producto("P010","Jarabe para tos infantil",10,5, LocalDate.now().plusDays(3), false, 7000.0));
+        productos.add(new Producto("P011","Amoxicilina 500mg",0,5, LocalDate.now().plusMonths(2), false, 3500.0));
     }
 
     // ============================================
