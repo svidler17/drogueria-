@@ -1,4 +1,4 @@
-package inventario;
+package inventario; //cambiar los colores
 
 import java.time.LocalDate;
 import java.util.ArrayList;
