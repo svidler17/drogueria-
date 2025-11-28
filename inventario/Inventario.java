@@ -117,16 +117,12 @@ public class Inventario {
                 alerta = "PRODUCTO VENCIDO";
                 colorAlerta = Colors.RED + Colors.BOLD;
             } else {
-                if (p.isRequiereFrio()) {
-                    alerta = "ATENCIÓN: Producto sensible a temperatura == Verificar integridad de la cadena de frío (temperatura de almacenamiento).";
-                    colorAlerta = Colors.BRIGHT_BLUE + Colors.BOLD;
-                } else {
-                    if (p.getFechaVencimiento() != null) {
-                        long dias = ChronoUnit.DAYS.between(LocalDate.now(), p.getFechaVencimiento());
-                        if (dias >= 15 && dias <= 20) {
-                            alerta = "VENCE EN " + dias + " DÍAS == REVISAR";
-                            colorAlerta = Colors.YELLOW + Colors.BOLD;
-                        }
+                // próximos a vencer (15-20)
+                if (p.getFechaVencimiento() != null) {
+                    long dias = ChronoUnit.DAYS.between(LocalDate.now(), p.getFechaVencimiento());
+                    if (dias >= 15 && dias <= 20) {
+                        alerta = "VENCE EN " + dias + " DÍAS == REVISAR";
+                        colorAlerta = Colors.YELLOW + Colors.BOLD;
                     }
                 }
             }
@@ -137,11 +133,7 @@ public class Inventario {
                 colorAlerta = Colors.YELLOW;
             }
 
-            // 4) si sigue sin alerta y requiere frío, añadir mensaje técnico
-            if (alerta == null && p.isRequiereFrio()) {
-                alerta = "ATENCIÓN: Producto sensible a temperatura — Revisar cadena de frío (temperatura y almacenamiento)";
-                colorAlerta = Colors.BRIGHT_BLUE + Colors.BOLD;
-            }
+            // (No se muestran alertas específicas para productos refrigerados para evitar saturar el listado)
 
             if (alerta != null) {
                 // Evitar duplicados por nombre — si ya mostramos alerta para este nombre, la omitimos
