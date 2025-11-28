@@ -18,7 +18,7 @@ public class Venta {
     public ArrayList<ItemVenta> getItems() { return items; }
     public double getTotal() { return total; }
 
-    @Override
+    
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("=== VENTA ===\n");

@@ -19,7 +19,7 @@ public class ItemVenta {
     public int getCantidad() { return cantidad; }
     public double getSubtotal() { return subtotal; }
 
-    @Override
+    
     public String toString() {
         return String.format(
                 "  - %s (%s) x%d  →  Subtotal: $%.2f",

@@ -58,7 +58,7 @@ public class Producto {
     // ---------------------------------------------------
     // FORMATO DE IMPRESIÓN
     // ---------------------------------------------------
-    @Override
+    
     public String toString() {
         return String.format(
             "%-8s |Nombre: %-25s | Cant: %-4d | Mínimo: %-4d | Vence: %-12s | Frío: %-3s |Precio: $%.2f",

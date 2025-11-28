@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.ArrayList;
 import ventas.ItemVenta;
-import ventas.Historial;
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static SistemaLogin sistemaLogin = new SistemaLogin();
@@ -197,6 +196,7 @@ public class Main {
 
   private static void menuVentas() {
     System.out.println("\n--- VENTAS ---");
+
     ArrayList<ItemVenta> listaItems = new ArrayList<>();
     boolean continuar = true;
 
@@ -205,12 +205,13 @@ public class Main {
         String query = scanner.nextLine().trim();
         ArrayList<Producto> matches = inventario.buscarPorCodigoONombre(query);
 
-        if (matches.isEmpty()) { 
-            System.out.println("Producto no encontrado."); 
-            continue; // vuelve al inicio del while
+        if (matches.isEmpty()) {
+            System.out.println("Producto no encontrado.");
+            continue;
         }
 
         Producto p;
+
         if (matches.size() == 1) {
             p = matches.get(0);
         } else {
@@ -221,8 +222,8 @@ public class Main {
             }
             System.out.print("Ingrese el número del producto a vender (o 0 para cancelar): ");
             int sel = leerInt();
-            if (sel <= 0 || sel > matches.size()) { 
-                System.out.println("Operación cancelada o selección inválida."); 
+            if (sel <= 0 || sel > matches.size()) {
+                System.out.println("Operación cancelada o selección inválida.");
                 continue;
             }
             p = matches.get(sel - 1);
@@ -232,33 +233,31 @@ public class Main {
 
         System.out.print("Cantidad a vender: ");
         int cantidad = leerInt();
-        if (cantidad <= 0) { 
-            System.out.println("Cantidad inválida."); 
+
+        if (cantidad <= 0) {
+            System.out.println("Cantidad inválida.");
             continue;
         }
-        if (p.getCantidad() < cantidad) { 
-            System.out.println("Stock insuficiente."); 
+        if (p.getCantidad() < cantidad) {
+            System.out.println("Stock insuficiente.");
             continue;
         }
 
-        // Confirmar si quiere agregar otro producto
+        // Confirmar agregar a venta
         System.out.print("¿Desea agregar este producto a la venta? (s/n): ");
         String conf = scanner.nextLine().trim();
-        if (!conf.equalsIgnoreCase("s")) { 
-            System.out.println("Producto no agregado."); 
+        if (!conf.equalsIgnoreCase("s")) {
+            System.out.println("Producto no agregado.");
         } else {
-            // Agregar item a la lista
             listaItems.add(new ItemVenta(
                 p.getCodigo(),
                 p.getNombre(),
                 cantidad,
                 cantidad * p.getPrecio()
             ));
-            // Restar del inventario
             p.setCantidad(p.getCantidad() - cantidad);
         }
 
-        // Preguntar si desea seguir agregando productos
         System.out.print("¿Desea agregar otro producto a la venta? (s/n): ");
         String seguir = scanner.nextLine().trim();
         if (!seguir.equalsIgnoreCase("s")) {
@@ -274,7 +273,18 @@ public class Main {
     // Calcular total
     double total = 0;
     for (ItemVenta item : listaItems) {
-        total += item.getSubtotal(); // asumimos que ItemVenta tiene getTotal()
+        total += item.getSubtotal();
+    }
+
+    System.out.printf("\nTOTAL DE LA COMPRA: $%.2f\n", total);
+
+    // CONFIRMAR COMPRA
+    System.out.print("¿Desea realizar la compra? (s/n): ");
+    String confirmar = scanner.nextLine().trim();
+
+    if (!confirmar.equalsIgnoreCase("s")) {
+        System.out.println("Venta cancelada. No se registró nada.");
+        return;
     }
 
     // Crear venta
@@ -285,6 +295,7 @@ public class Main {
 
     System.out.println("\nVenta registrada correctamente:\n" + v);
 }
+
 
 
 
