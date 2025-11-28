@@ -7,7 +7,9 @@ import ventas.HistorialVentas;
 import ventas.Venta;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
-
+import java.util.ArrayList;
+import ventas.ItemVenta;
+import ventas.Historial;
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static SistemaLogin sistemaLogin = new SistemaLogin();
