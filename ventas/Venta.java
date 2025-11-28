@@ -1,28 +1,37 @@
 package ventas;
+
 import java.time.LocalDate;
+import java.util.ArrayList;
+
 public class Venta {
     private LocalDate fecha;
-    private String codigo;
-    private String nombre;
-    private int cantidad;
+    private ArrayList<ItemVenta> items;
     private double total;
 
-    public Venta(LocalDate fecha, String codigo, String nombre, int cantidad, double total) {
+    public Venta(LocalDate fecha, ArrayList<ItemVenta> items, double total) {
         this.fecha = fecha;
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.cantidad = cantidad;
+        this.items = items;
         this.total = total;
     }
 
     public LocalDate getFecha() { return fecha; }
-    public String getCodigo() { return codigo; }
-    public String getNombre() { return nombre; }
-    public int getCantidad() { return cantidad; }
+    public ArrayList<ItemVenta> getItems() { return items; }
     public double getTotal() { return total; }
 
     @Override
     public String toString() {
-        return String.format("%s | %s x%d | Total: %.2f", fecha.toString(), nombre, cantidad, total);
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== VENTA ===\n");
+        sb.append("Fecha: ").append(fecha).append("\n");
+        sb.append("Productos:\n");
+
+        for (ItemVenta item : items) {
+            sb.append(item.toString()).append("\n");
+        }
+
+        sb.append("-----------------------------\n");
+        sb.append(String.format("TOTAL: $%.2f\n", total));
+
+        return sb.toString();
     }
 }
