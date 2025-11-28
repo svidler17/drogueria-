@@ -475,4 +475,8 @@ public class Inventario {
             return 0.0;
         }
     }
+       public java.util.ArrayList<Producto> getListaProductos() {
+    return productos;
+}
+
 }
