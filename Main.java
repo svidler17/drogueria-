@@ -193,101 +193,125 @@ public class Main {
         } while (op != 0);
     }
 
-    private static void menuVentas() {
-        System.out.println("\n" + Colors.wrap(Colors.GREEN + Colors.BOLD, "╔════════════════════════════════════════╗"));
-        System.out.println(Colors.wrap(Colors.GREEN + Colors.BOLD, "║            VENTAS                      ║"));
-        System.out.println(Colors.wrap(Colors.GREEN + Colors.BOLD, "╚════════════════════════════════════════╝"));
-        System.out.print("Codigo o nombre del producto: ");
+  private static void menuVentas() {
+    System.out.println("\n--- VENTAS ---");
+    ArrayList<ItemVenta> listaItems = new ArrayList<>();
+    boolean continuar = true;
+
+    while (continuar) {
+        System.out.print("\nCódigo o nombre del producto: ");
         String query = scanner.nextLine().trim();
-        
-        java.util.ArrayList<Producto> matches = inventario.buscarPorCodigoONombre(query);
-        if (matches.isEmpty()) {
-            System.out.println(Colors.wrap(Colors.RED, "Producto no encontrado."));
-            return;
+        ArrayList<Producto> matches = inventario.buscarPorCodigoONombre(query);
+
+        if (matches.isEmpty()) { 
+            System.out.println("Producto no encontrado."); 
+            continue; // vuelve al inicio del while
         }
 
         Producto p;
         if (matches.size() == 1) {
             p = matches.get(0);
         } else {
-            System.out.println(Colors.wrap(Colors.YELLOW, "Se encontraron varios productos:"));
+            System.out.println("Se encontraron varios productos:");
             for (int i = 0; i < matches.size(); i++) {
                 Producto m = matches.get(i);
                 System.out.printf("  %d) %s\n", i + 1, inventario.formatoResumenProducto(m));
             }
-            System.out.print("Ingrese el numero del producto a vender (o 0 para cancelar): ");
+            System.out.print("Ingrese el número del producto a vender (o 0 para cancelar): ");
             int sel = leerInt();
-            if (sel <= 0 || sel > matches.size()) {
-                System.out.println(Colors.wrap(Colors.YELLOW, "Operacion cancelada o seleccion invalida."));
-                return;
+            if (sel <= 0 || sel > matches.size()) { 
+                System.out.println("Operación cancelada o selección inválida."); 
+                continue;
             }
             p = matches.get(sel - 1);
         }
 
         inventario.mostrarDetallesProducto(p);
-        System.out.print("Desea continuar con la venta? (s/n): ");
-        String conf = scanner.nextLine().trim();
-        if (!conf.equalsIgnoreCase("s")) {
-            System.out.println(Colors.wrap(Colors.YELLOW, "Venta cancelada."));
-            return;
-        }
-        
+
         System.out.print("Cantidad a vender: ");
         int cantidad = leerInt();
-        if (cantidad <= 0) {
-            System.out.println(Colors.wrap(Colors.RED, "Cantidad invalida."));
-            return;
+        if (cantidad <= 0) { 
+            System.out.println("Cantidad inválida."); 
+            continue;
         }
-        if (p.getCantidad() < cantidad) {
-            System.out.println(Colors.wrap(Colors.RED, "Stock insuficiente."));
-            return;
+        if (p.getCantidad() < cantidad) { 
+            System.out.println("Stock insuficiente."); 
+            continue;
         }
 
-        p.setCantidad(p.getCantidad() - cantidad);
-        double total = cantidad * p.getPrecio();
-        Venta v = new Venta(java.time.LocalDate.now(), p.getCodigo(), p.getNombre(), cantidad, total);
-        historial.registrarVenta(v);
-        System.out.println(Colors.wrap(Colors.GREEN, "Venta registrada: " + v));
+        // Confirmar si quiere agregar otro producto
+        System.out.print("¿Desea agregar este producto a la venta? (s/n): ");
+        String conf = scanner.nextLine().trim();
+        if (!conf.equalsIgnoreCase("s")) { 
+            System.out.println("Producto no agregado."); 
+        } else {
+            // Agregar item a la lista
+            listaItems.add(new ItemVenta(
+                p.getCodigo(),
+                p.getNombre(),
+                cantidad,
+                cantidad * p.getPrecio()
+            ));
+            // Restar del inventario
+            p.setCantidad(p.getCantidad() - cantidad);
+        }
+
+        // Preguntar si desea seguir agregando productos
+        System.out.print("¿Desea agregar otro producto a la venta? (s/n): ");
+        String seguir = scanner.nextLine().trim();
+        if (!seguir.equalsIgnoreCase("s")) {
+            continuar = false;
+        }
     }
+
+    if (listaItems.isEmpty()) {
+        System.out.println("No se registró ninguna venta.");
+        return;
+    }
+
+    // Calcular total
+    double total = 0;
+    for (ItemVenta item : listaItems) {
+        total += item.getSubtotal(); // asumimos que ItemVenta tiene getTotal()
+    }
+
+    // Crear venta
+    Venta v = new Venta(java.time.LocalDate.now(), listaItems, total);
+
+    // Registrar venta
+    historial.registrarVenta(v);
+
+    System.out.println("\nVenta registrada correctamente:\n" + v);
+}
+
+
 
     private static void menuReportes() {
-        int op;
-        do {
-            System.out.println("\n" + Colors.wrap(Colors.YELLOW + Colors.BOLD, "╔════════════════════════════════════════╗"));
-            System.out.println(Colors.wrap(Colors.YELLOW + Colors.BOLD, "║          REPORTES                      ║"));
-            System.out.println(Colors.wrap(Colors.YELLOW + Colors.BOLD, "╚════════════════════════════════════════╝"));
-            System.out.println(Colors.wrap(Colors.CYAN, "1. Historial de ventas"));
-            System.out.println(Colors.wrap(Colors.CYAN, "2. Producto mas vendido"));
-            System.out.println(Colors.wrap(Colors.CYAN, "3. Producto menos vendido"));
-            System.out.println("0. Regresar");
-            System.out.print("Opcion: ");
-            op = leerInt();
-            
-            switch (op) {
-                case 1 -> historial.mostrarHistorial();
-                case 2 -> {
-                    String codigo = historial.masVendido();
-                    if (codigo == null) {
-                        System.out.println(Colors.wrap(Colors.YELLOW, "No hay ventas registradas."));
-                    } else {
-                        Producto prod = inventario.buscarPorCodigo(codigo);
-                        String nombre = prod != null ? prod.getNombre() : codigo;
-                        System.out.println(Colors.wrap(Colors.GREEN, " Mas vendido: " + nombre));
-                    }
+    int op;
+    do {
+        System.out.println("\n--- REPORTES ---");
+        System.out.println("1. Historial de ventas");
+        System.out.println("2. Reporte de productos vendidos (barras)");
+        System.out.println("0. Regresar");
+        System.out.print("Opción: ");
+        op = leerInt();
+
+        switch (op) {
+            case 1 -> historial.mostrarHistorial();
+
+            case 2 -> {
+                // Crear mapa código → nombre
+                java.util.Map<String, String> nombres = new java.util.HashMap<>();
+                for (Producto p : inventario.getListaProductos()) {
+                    nombres.put(p.getCodigo(), p.getNombre());
                 }
-                case 3 -> {
-                    String codigo = historial.menosVendido();
-                    if (codigo == null) {
-                        System.out.println(Colors.wrap(Colors.YELLOW, "No hay ventas registradas."));
-                    } else {
-                        Producto prod = inventario.buscarPorCodigo(codigo);
-                        String nombre = prod != null ? prod.getNombre() : codigo;
-                        System.out.println(Colors.wrap(Colors.CYAN, " Menos vendido: " + nombre));
-                    }
-                }
-                case 0 -> {}
-                default -> System.out.println(Colors.wrap(Colors.RED, "Opcion invalida."));
+
+                historial.mostrarReporteBarras(nombres);
             }
-        } while (op != 0);
-    }
+
+            case 0 -> {}
+            default -> System.out.println("Opción inválida.");
+        }
+    } while (op != 0);
+}
 }
