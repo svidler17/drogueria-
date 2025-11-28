@@ -1,80 +1,185 @@
 import inventario.Inventario;
 import inventario.Producto;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-import usuarios.SistemaUsuarios;
-import usuarios.Usuario;
+import usuarios.SistemaLogin;
+import usuarios.GestionUsuarios;
 import utils.Colors;
 import ventas.HistorialVentas;
 import ventas.Venta;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
-    private static SistemaUsuarios sistemaUsuarios = new SistemaUsuarios();
+    private static SistemaLogin sistemaLogin = new SistemaLogin();
+    private static GestionUsuarios gestionUsuarios = new GestionUsuarios();
     private static Inventario inventario = new Inventario();
     private static HistorialVentas historial = new HistorialVentas();
     private static DateTimeFormatter df = DateTimeFormatter.ISO_LOCAL_DATE;
 
     public static void main(String[] args) {
-        sistemaUsuarios.crearUsuario("admin", "1234", true);
-        sistemaUsuarios.crearUsuario("vendedor", "0000", false);
-
         inventario.cargarPredeterminado();
-
-        System.out.println(Colors.wrap(Colors.BLUE + Colors.BOLD, " ---- DROGUERÍA ---- "));
-        System.out.print("Usuario: ");
-        String user = scanner.nextLine();
-        System.out.print("Contraseña: ");
-        String pass = scanner.nextLine();
-
-        Usuario actual = sistemaUsuarios.login(user, pass);
-        if (actual == null) {
-            System.out.println("Credenciales inválidas. Saliendo...");
-            return;
+        
+        boolean salirDelSistema = false;
+        
+        while (!salirDelSistema) {
+            salirDelSistema = menuInicial();
         }
+        
+        System.out.println(Colors.wrap(Colors.CYAN + Colors.BOLD, "\nGracias por usar el sistema! Hasta pronto."));
+        scanner.close();
+    }
 
-        inventario.mostrarAlertas();
+    private static boolean menuInicial() {
+        System.out.println("\n" + Colors.wrap(Colors.BLUE + Colors.BOLD, "╔════════════════════════════════════════╗"));
+        System.out.println(Colors.wrap(Colors.BLUE + Colors.BOLD, "║     SISTEMA DE DROGUERIA - INICIO      ║"));
+        System.out.println(Colors.wrap(Colors.BLUE + Colors.BOLD, "╚════════════════════════════════════════╝"));
+        System.out.println(Colors.wrap(Colors.YELLOW, "1. Iniciar Sesion"));
+        System.out.println(Colors.wrap(Colors.YELLOW, "0. Salir del Sistema"));
+        System.out.print("Seleccione una opcion: ");
+        
+        int opcion = leerInt();
+        
+        switch (opcion) {
+            case 1:
+                if (sistemaLogin.iniciarSesion(scanner)) {
+                    inventario.mostrarAlertas();
+                    menuPrincipal();
+                }
+                return false;
+                
+            case 0:
+                return true;
+                
+            default:
+                System.out.println(Colors.wrap(Colors.RED, "Opcion invalida. Intente nuevamente."));
+                return false;
+        }
+    }
 
+    private static void menuPrincipal() {
         int opc;
         do {
-            System.out.println(Colors.wrap(Colors.GREEN + Colors.BOLD, "\nº--- MENÚ PRINCIPAL ---"));
+            System.out.println("\n" + Colors.wrap(Colors.GREEN + Colors.BOLD, "╔════════════════════════════════════════╗"));
+            System.out.println(Colors.wrap(Colors.GREEN + Colors.BOLD, "║          MENU PRINCIPAL                ║"));
+            System.out.println(Colors.wrap(Colors.GREEN + Colors.BOLD, "╚════════════════════════════════════════╝"));
+            System.out.println(Colors.wrap(Colors.CYAN, "  Usuario: " + sistemaLogin.obtenerNombreUsuario()));
+            System.out.println(Colors.wrap(Colors.CYAN, "  Rol: " + (sistemaLogin.isEsAdmin() ? "Administrador" : "Usuario")));
+            System.out.println("──────────────────────────────────────────");
             System.out.println(Colors.wrap(Colors.YELLOW, "1. Inventario"));
             System.out.println(Colors.wrap(Colors.YELLOW, "2. Ventas"));
-            if (actual.isAdmin()) System.out.println(Colors.wrap(Colors.YELLOW, "3. Reportes"));
-            if (actual.isAdmin()) System.out.println(Colors.wrap(Colors.YELLOW, "4. Usuarios "));
-            System.out.println(Colors.wrap(Colors.YELLOW, "5. Ver alertas"));
-            System.out.println(Colors.wrap(Colors.YELLOW, "0. Salir"));
-            System.out.print("Opción: ");
+            
+            if (sistemaLogin.isEsAdmin()) {
+                System.out.println(Colors.wrap(Colors.YELLOW, "3. Reportes"));
+                System.out.println(Colors.wrap(Colors.YELLOW, "4. Gestion de Usuarios"));
+            }
+            
+            System.out.println(Colors.wrap(Colors.YELLOW, "5. Ver Alertas de Inventario"));
+            System.out.println("0. Cerrar Sesion");
+            System.out.print("Opcion: ");
             opc = leerInt();
 
             switch (opc) {
-                case 1 -> menuInventario();
-                case 2 -> menuVentas();
-                case 3 -> { if (actual.isAdmin()) menuReportes(); else System.out.println("\u001B[31m\u001B[3mAcceso denegado :(\u001B[0m"); }
-                case 4 -> { if (actual.isAdmin()) sistemaUsuarios.menuAdmin(scanner); else System.out.println("\u001B[31m\u001B[3mAcceso denegado :(\u001B[0m"); }
-                case 5 -> inventario.mostrarAlertas();
-                case 0 -> System.out.println("Saliendo...");
-                default -> System.out.println("Opción inválida.");
+                case 1:
+                    menuInventario();
+                    break;
+                    
+                case 2:
+                    menuVentas();
+                    break;
+                    
+                case 3:
+                    if (sistemaLogin.isEsAdmin()) {
+                        menuReportes();
+                    } else {
+                        System.out.println(Colors.wrap(Colors.RED + Colors.BOLD, " Acceso denegado. Solo administradores."));
+                    }
+                    break;
+                    
+                case 4:
+                    if (sistemaLogin.isEsAdmin()) {
+                        menuGestionUsuarios();
+                    } else {
+                        System.out.println(Colors.wrap(Colors.RED + Colors.BOLD, " Acceso denegado. Solo administradores."));
+                    }
+                    break;
+                    
+                case 5:
+                    inventario.mostrarAlertas();
+                    break;
+                    
+                case 0:
+                    sistemaLogin.cerrarSesion();
+                    System.out.println(Colors.wrap(Colors.YELLOW, "\nRegresando al menu inicial..."));
+                    break;
+                    
+                default:
+                    System.out.println(Colors.wrap(Colors.RED, "Opcion invalida."));
             }
         } while (opc != 0);
+    }
+
+    private static void menuGestionUsuarios() {
+        int op;
+        do {
+            System.out.println("\n" + Colors.wrap(Colors.CYAN + Colors.BOLD, "╔════════════════════════════════════════╗"));
+            System.out.println(Colors.wrap(Colors.CYAN + Colors.BOLD, "║      GESTION DE USUARIOS               ║"));
+            System.out.println(Colors.wrap(Colors.CYAN + Colors.BOLD, "╚════════════════════════════════════════╝"));
+            System.out.println(Colors.wrap(Colors.YELLOW, "1. Listar Usuarios"));
+            System.out.println(Colors.wrap(Colors.YELLOW, "2. Registrar Nuevo Usuario"));
+            System.out.println(Colors.wrap(Colors.YELLOW, "3. Editar Usuario"));
+            System.out.println(Colors.wrap(Colors.YELLOW, "4. Eliminar Usuario"));
+            System.out.println(Colors.wrap(Colors.YELLOW, "0. Regresar"));
+            System.out.print("Opcion: ");
+            op = leerInt();
+
+            switch (op) {
+                case 1:
+                    gestionUsuarios.listarUsuarios();
+                    break;
+                    
+                case 2:
+                    gestionUsuarios.registrarUsuario(scanner, sistemaLogin);
+                    break;
+                    
+                case 3:
+                    gestionUsuarios.editarUsuario(scanner);
+                    break;
+                    
+                case 4:
+                    System.out.print("Ingrese la cedula del usuario a eliminar: ");
+                    String cedula = scanner.nextLine().trim();
+                    gestionUsuarios.eliminarUsuario(cedula);
+                    break;
+                    
+                case 0:
+                    break;
+                    
+                default:
+                    System.out.println(Colors.wrap(Colors.RED, "Opcion invalida."));
+            }
+        } while (op != 0);
     }
 
     private static int leerInt() {
         try {
             return Integer.parseInt(scanner.nextLine().trim());
-        } catch (Exception e) { return -1; }
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     private static void menuInventario() {
         int op;
         do {
-            System.out.println(Colors.wrap(Colors.AQUA + Colors.BOLD, "\n--- INVENTARIO ---"));
+            System.out.println("\n" + Colors.wrap(Colors.AQUA + Colors.BOLD, "╔════════════════════════════════════════╗"));
+            System.out.println(Colors.wrap(Colors.AQUA + Colors.BOLD, "║          INVENTARIO                    ║"));
+            System.out.println(Colors.wrap(Colors.AQUA + Colors.BOLD, "╚════════════════════════════════════════╝"));
             System.out.println(Colors.wrap(Colors.BRIGHT_GREEN, "1. Agregar producto"));
             System.out.println(Colors.wrap(Colors.CYAN, "2. Editar producto"));
             System.out.println(Colors.wrap(Colors.RED, "3. Quitar producto"));
             System.out.println(Colors.wrap(Colors.AQUA, "4. Ver inventario"));
             System.out.println("0. Regresar");
-            System.out.print("Opción: ");
+            System.out.print("Opcion: ");
             op = leerInt();
 
             switch (op) {
@@ -83,75 +188,106 @@ public class Main {
                 case 3 -> inventario.menuQuitar(scanner);
                 case 4 -> inventario.listar();
                 case 0 -> {}
-                default -> System.out.println("Opción inválida.");
+                default -> System.out.println(Colors.wrap(Colors.RED, "Opcion invalida."));
             }
         } while (op != 0);
     }
 
     private static void menuVentas() {
-        System.out.println("\n--- VENTAS ---");
-        System.out.print("Código o nombre del producto: ");
+        System.out.println("\n" + Colors.wrap(Colors.GREEN + Colors.BOLD, "╔════════════════════════════════════════╗"));
+        System.out.println(Colors.wrap(Colors.GREEN + Colors.BOLD, "║            VENTAS                      ║"));
+        System.out.println(Colors.wrap(Colors.GREEN + Colors.BOLD, "╚════════════════════════════════════════╝"));
+        System.out.print("Codigo o nombre del producto: ");
         String query = scanner.nextLine().trim();
+        
         java.util.ArrayList<Producto> matches = inventario.buscarPorCodigoONombre(query);
-        if (matches.isEmpty()) { System.out.println("Producto no encontrado."); return; }
+        if (matches.isEmpty()) {
+            System.out.println(Colors.wrap(Colors.RED, "Producto no encontrado."));
+            return;
+        }
 
         Producto p;
         if (matches.size() == 1) {
             p = matches.get(0);
         } else {
-            System.out.println("Se encontraron varios productos:");
+            System.out.println(Colors.wrap(Colors.YELLOW, "Se encontraron varios productos:"));
             for (int i = 0; i < matches.size(); i++) {
                 Producto m = matches.get(i);
                 System.out.printf("  %d) %s\n", i + 1, inventario.formatoResumenProducto(m));
             }
-            System.out.print("Ingrese el número del producto a vender (o 0 para cancelar): ");
+            System.out.print("Ingrese el numero del producto a vender (o 0 para cancelar): ");
             int sel = leerInt();
-            if (sel <= 0 || sel > matches.size()) { System.out.println("Operación cancelada o selección inválida."); return; }
+            if (sel <= 0 || sel > matches.size()) {
+                System.out.println(Colors.wrap(Colors.YELLOW, "Operacion cancelada o seleccion invalida."));
+                return;
+            }
             p = matches.get(sel - 1);
         }
 
         inventario.mostrarDetallesProducto(p);
-        System.out.print("¿Desea continuar con la venta? (s/n): ");
+        System.out.print("Desea continuar con la venta? (s/n): ");
         String conf = scanner.nextLine().trim();
-        if (!conf.equalsIgnoreCase("s")) { System.out.println("Venta cancelada."); return; }
+        if (!conf.equalsIgnoreCase("s")) {
+            System.out.println(Colors.wrap(Colors.YELLOW, "Venta cancelada."));
+            return;
+        }
+        
         System.out.print("Cantidad a vender: ");
         int cantidad = leerInt();
-        if (cantidad <= 0) { System.out.println("Cantidad inválida."); return; }
-        if (p.getCantidad() < cantidad) { System.out.println("Stock insuficiente."); return; }
+        if (cantidad <= 0) {
+            System.out.println(Colors.wrap(Colors.RED, "Cantidad invalida."));
+            return;
+        }
+        if (p.getCantidad() < cantidad) {
+            System.out.println(Colors.wrap(Colors.RED, "Stock insuficiente."));
+            return;
+        }
 
         p.setCantidad(p.getCantidad() - cantidad);
         double total = cantidad * p.getPrecio();
         Venta v = new Venta(java.time.LocalDate.now(), p.getCodigo(), p.getNombre(), cantidad, total);
         historial.registrarVenta(v);
-        System.out.println("Venta registrada: " + v);
+        System.out.println(Colors.wrap(Colors.GREEN, "Venta registrada: " + v));
     }
 
     private static void menuReportes() {
         int op;
         do {
-            System.out.println("\n--- REPORTES ---");
-            System.out.println("1. Historial de ventas");
-            System.out.println("2. Producto más vendido");
-            System.out.println("3. Producto menos vendido");
+            System.out.println("\n" + Colors.wrap(Colors.YELLOW + Colors.BOLD, "╔════════════════════════════════════════╗"));
+            System.out.println(Colors.wrap(Colors.YELLOW + Colors.BOLD, "║          REPORTES                      ║"));
+            System.out.println(Colors.wrap(Colors.YELLOW + Colors.BOLD, "╚════════════════════════════════════════╝"));
+            System.out.println(Colors.wrap(Colors.CYAN, "1. Historial de ventas"));
+            System.out.println(Colors.wrap(Colors.CYAN, "2. Producto mas vendido"));
+            System.out.println(Colors.wrap(Colors.CYAN, "3. Producto menos vendido"));
             System.out.println("0. Regresar");
-            System.out.print("Opción: ");
+            System.out.print("Opcion: ");
             op = leerInt();
+            
             switch (op) {
                 case 1 -> historial.mostrarHistorial();
                 case 2 -> {
                     String codigo = historial.masVendido();
-                    if (codigo == null) System.out.println("No hay ventas.");
-                    else System.out.println("Más vendido: " + (inventario.buscarPorCodigo(codigo) != null ? inventario.buscarPorCodigo(codigo).getNombre() : codigo));
+                    if (codigo == null) {
+                        System.out.println(Colors.wrap(Colors.YELLOW, "No hay ventas registradas."));
+                    } else {
+                        Producto prod = inventario.buscarPorCodigo(codigo);
+                        String nombre = prod != null ? prod.getNombre() : codigo;
+                        System.out.println(Colors.wrap(Colors.GREEN, " Mas vendido: " + nombre));
+                    }
                 }
                 case 3 -> {
                     String codigo = historial.menosVendido();
-                    if (codigo == null) System.out.println("No hay ventas.");
-                    else System.out.println("Menos vendido: " + (inventario.buscarPorCodigo(codigo) != null ? inventario.buscarPorCodigo(codigo).getNombre() : codigo));
+                    if (codigo == null) {
+                        System.out.println(Colors.wrap(Colors.YELLOW, "No hay ventas registradas."));
+                    } else {
+                        Producto prod = inventario.buscarPorCodigo(codigo);
+                        String nombre = prod != null ? prod.getNombre() : codigo;
+                        System.out.println(Colors.wrap(Colors.CYAN, " Menos vendido: " + nombre));
+                    }
                 }
                 case 0 -> {}
-                default -> System.out.println("Opción inválida.");
+                default -> System.out.println(Colors.wrap(Colors.RED, "Opcion invalida."));
             }
         } while (op != 0);
     }
-
-    }
+}
